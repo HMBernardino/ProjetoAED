@@ -121,7 +121,7 @@ import java.io.IOException;
 			
 	        switch (oper) {
 	            case "Inserir":
-	            	for(int x=0;x<1000;x++){
+	            	for(int x=0;x<1;x++){
 	            		ResizingArrayQueue<Integer> nums = new ResizingArrayQueue<Integer>();
 	            	
 	            	//Inserção do número da amostra selecionado no array (enqueue)
