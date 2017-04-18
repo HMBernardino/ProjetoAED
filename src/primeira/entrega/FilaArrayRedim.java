@@ -70,8 +70,8 @@ import java.io.IOException;
 				
 				Row header = sheet.createRow(0);
 				header.createCell(0).setCellValue("Número de inteiros");
-				header.createCell(1).setCellValue("Tempo passado");
-				header.createCell(2).setCellValue("Tempo nanosegundos");
+				header.createCell(1).setCellValue("Tempo decorrido");
+				header.createCell(2).setCellValue("Tempo por operação");
 				header.createCell(3).setCellValue("Memória Ocupada(Bytes)");
 				
 				numLinhas = sheet.getPhysicalNumberOfRows();
@@ -101,9 +101,6 @@ import java.io.IOException;
 		}
 			
 	    public static void main(String[] args){
-	    	
-	    	//Criação do array
-	    	//ResizingArrayQueue<Integer> nums = new ResizingArrayQueue<Integer>();
 	    	int r = 69;
 	    	String operacao = "";
 	    	double tempo = 0;
@@ -112,8 +109,6 @@ import java.io.IOException;
 	    	String oper = in.nextLine();
 	    	out.println("Escolha o tamanho da amostra (>1000)");
 			int kints = in.nextInt();
-			///////VAR auxiliar
-			int teste=0;
 			//Escolha da operação e tamanho da amostra
 			operacao = oper+kints;
 			out.println("OP: " + operacao);
@@ -121,27 +116,34 @@ import java.io.IOException;
 			
 	        switch (oper) {
 	            case "Inserir":
-	            	for(int x=0;x<1;x++){
+	            	for(int x=0;x<1000;x++){
 	            		ResizingArrayQueue<Integer> nums = new ResizingArrayQueue<Integer>();
-	            	
 	            	//Inserção do número da amostra selecionado no array (enqueue)
 	            	if (kints>=1000){
 	            		//Início da inserção
 	            		final Stopwatch stopwatchInserir = new Stopwatch();
 						for (int i = 0; i != kints; i++) {
 							nums.enqueue(r);
-							teste++;
-							out.println(teste);
 						}
 						//Paragem do contador do tempo de execução
 						tempo = stopwatchInserir.elapsedTime();
-						out.println(tempo);
-						//Verificar número de elementos no array
+						//Memória ocupada pela fila
+						//Verificar número de elementos no array  ***
+						// Tamanho(Bytes):
+						// Classe:
+						// -Header do objecto:16
+						// -int[] nums:8
+						// -int tamanho:4
+						// -int primeiro:4
+						// -int ultimo:4
+						// -Padding:4
+						// ResizingArrayQueue = 40
+						// ResizingArrayQueue + Espaço reservado do Array(8)
+						// ResizingArrayQueue.sizeOf() + 8 * ResizingArrayQueue.tamanho
 						if(nums.size() == 1){
 							memoriaOcupada = sizeOf(nums);
 						}else{
 							memoriaOcupada = sizeOf(nums) + 8 * nums.size();}
-						out.println(memoriaOcupada);
 						//Escrita em excel
 						EscreverEmExcel(nums.size(), tempo, operacao, memoriaOcupada);
 	            	}
@@ -158,7 +160,9 @@ import java.io.IOException;
 	            		for (int i = 0; i != kints; i++) {
 	            			nums.enqueue(r);
 	            		}
+	            		int tamanho = nums.size();
 	            		//Verificar número de elementos no array
+	            		// ***
 	            		if(nums.size() == 1){
 							memoriaOcupada = sizeOf(nums);
 						}else{
@@ -168,12 +172,13 @@ import java.io.IOException;
 	            		final Stopwatch stopwatchRemover = new Stopwatch();
 	            		for (int i = 0; i != kints; i++) {
 	            			nums.dequeue();
+	            			
 	            		}
 	            		//Paragem do contador do tempo de execução
 	            		tempo = stopwatchRemover.elapsedTime();
 	            		
 	            		//Escrita em excel
-	            		EscreverEmExcel(nums.size(), tempo, operacao, memoriaOcupada);
+	            		EscreverEmExcel(tamanho, tempo, operacao, memoriaOcupada);
 	            	}
 	            	else {out.println("Tamanho inválido");}
 	            	}

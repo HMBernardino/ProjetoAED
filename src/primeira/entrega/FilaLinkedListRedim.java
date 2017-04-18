@@ -68,8 +68,8 @@ import java.io.IOException;
 				
 				Row header = sheet.createRow(0);
 				header.createCell(0).setCellValue("Número de inteiros");
-				header.createCell(1).setCellValue("Tempo passado");
-				header.createCell(2).setCellValue("Tempo nanosegundos");
+				header.createCell(1).setCellValue("Tempo decorrido");
+				header.createCell(2).setCellValue("Tempo por operação");
 				header.createCell(3).setCellValue("Memória Ocupada(Bytes)");
 				
 				numLinhas = sheet.getPhysicalNumberOfRows();
@@ -99,30 +99,23 @@ import java.io.IOException;
 		}
 			
 	    public static void main(String[] args){
-	    	
-	    	//Criação da fila
-	    	//FilaLinkedList listaNums = new FilaLinkedList();
 	    	int r = 69;
 	    	String operacao = "";
 	    	double tempo = 0;
 	    	long memoriaOcupada = 0;
 	    	out.println("Escolha o tipo de operação (Inserir/Remover)");
 	    	String oper = in.nextLine();
-	    	out.println("Escolha o tamanho da amosta  (1000, 2000, 4000, ..., 32000)");
+	    	out.println("Escolha o tamanho da amosta  (>1000)");
 	    	int kints = in.nextInt();
 	    	//Escolha da operação e tamanho da amostra
 			operacao = oper+kints;
 			out.println("OP: " + operacao);
-			double tempojaa=0;
 	        switch (oper) {
 	            case "Inserir":
-	            	final Stopwatch tempoja = new Stopwatch();
-	            	for(int x=0;x<10000;x++){
+	            	for(int x=0;x<1000;x++){
 	            		FilaLinkedList listaNums = new FilaLinkedList();
-	            	
 	            	//Inserção do número da amostra selecionado na fila (enqueue)
 	            	if (kints>=1000) {
-	            		
 	            		//Início da inserção
 	            		final Stopwatch stopwatchInserir = new Stopwatch();
 	            		for (int i = 0; i != kints; i++) {
@@ -132,15 +125,29 @@ import java.io.IOException;
 	            		tempo = stopwatchInserir.elapsedTime();
 	            		
 	            		//Memória ocupada pela fila
+						// Tamanho(Bytes):
+						// Classe:FilaLinkedList
+						// -Header do objecto:16
+						// -Referencia primeiro:8
+						// -Referencia ultimo:8
+						// -int tamanho:4
+						// -Padding:4
+						// FilaLinkedList = 40
+	            		
+	            		//Node:
+						// -Referencia classe FilaLinkedList :8
+						// -Header do objecto:16
+	            		// -int[] item:8
+						// -Referencia Node.next:8
+	            		
+						// FilaLinkedList(40) + Node(40) * FilaLinkedList.tamanho
 	            		memoriaOcupada = listaNums.memoriaOcupada();
 	            		
 	            		//Escrita em Excel
 	            		EscreverEmExcel(listaNums.tamanho(), tempo, operacao, memoriaOcupada);
 	            	}
 	            	else {out.println("Tamanho inválido");}
-	            	tempojaa = tempoja.elapsedTime();
 	            	}
-	            	out.println(tempojaa);
 				break;
 	            
 	            case "Remover":
@@ -155,7 +162,6 @@ import java.io.IOException;
 	            		int tamanho = listaNums.tamanho();
 	            		//Memória Ocupada pela fila
 	            		memoriaOcupada = listaNums.memoriaOcupada();
-	            		out.println(memoriaOcupada);
 	            		
 	            		// Início da remoção da amostra
 	            		final Stopwatch stopwatchRemover = new Stopwatch();
