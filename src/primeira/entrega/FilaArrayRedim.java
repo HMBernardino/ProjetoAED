@@ -116,7 +116,7 @@ import java.io.IOException;
 			
 	        switch (oper) {
 	            case "Inserir":
-	            	for(int x=0;x<1000;x++){
+	            	for(int x=0;x<0;x++){
 	            		ResizingArrayQueue<Integer> nums = new ResizingArrayQueue<Integer>();
 	            	//Inserção do número da amostra selecionado no array (enqueue)
 	            	if (kints>=1000){
@@ -127,6 +127,7 @@ import java.io.IOException;
 						}
 						//Paragem do contador do tempo de execução
 						tempo = stopwatchInserir.elapsedTime();
+						out.println(tempo);
 						//Memória ocupada pela fila
 						//Verificar número de elementos no array  ***
 						// Tamanho(Bytes):
