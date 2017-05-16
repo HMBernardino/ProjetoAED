@@ -22,7 +22,7 @@ import edu.princeton.cs.algs4.In;
 public class SumExecutionTimeTester {
 	
 	
-	public static void EscreverEmExcel(int tamanho, double tempo, long repeticoes){
+	public static void EscreverEmExcel(int tamanho, double tempo, long repeticoes, long contiguousRepetitions, String tipoAmostra){
 		XSSFWorkbook workbook;
 		XSSFSheet sheet;
 		try{
@@ -63,17 +63,19 @@ public class SumExecutionTimeTester {
 		//Numero de linhas preenchidas
 		int numLinhas = sheet.getPhysicalNumberOfRows();
 		
-		sheet.setColumnWidth(0, 21*256);
+		sheet.setColumnWidth(0, 28*256);
 		sheet.setColumnWidth(1, 39*256);
 		sheet.setColumnWidth(2, 36*256);
+		sheet.setColumnWidth(3, 55*256);
 		
 		//Se o numero de linhas preenchidas for = 0 -> Criar cabeçalho
 		if(numLinhas == 0){
 		
 		Row header = sheet.createRow(0);
-		header.createCell(0).setCellValue("Tamanho da Amostra");
+		header.createCell(0).setCellValue("Tamanho e tipo da Amostra");
 		header.createCell(1).setCellValue("Tempo decorrido por ordenação(Mediana)");
 		header.createCell(2).setCellValue("Número de repetições por experiência");
+		header.createCell(3).setCellValue("Número de repetições por experiência (contiguousRepetitions)");
 		
 		numLinhas = sheet.getPhysicalNumberOfRows();
 		}
@@ -81,9 +83,10 @@ public class SumExecutionTimeTester {
 		//Registar resultado consoante numero de linhas preenchidas
 		Row dataRow = sheet.createRow(numLinhas);
 		
-	    dataRow.createCell(0).setCellValue(tamanho);
+	    dataRow.createCell(0).setCellValue(tamanho + " (" + tipoAmostra + ")");
 	    dataRow.createCell(1).setCellValue(tempo);
 	    dataRow.createCell(2).setCellValue(repeticoes);
+	    dataRow.createCell(3).setCellValue(contiguousRepetitions);
 	    
 	    //Criar/Gravar ficheiro .xlsx
 	    
@@ -103,7 +106,7 @@ public class SumExecutionTimeTester {
    
     public static final double timeBudgetPerExperiment = 5.0 /* seconds */;
 
-    public static final double minimumTimePerContiguousRepetitions = 1e-1 /* seconds */;
+    public static final double minimumTimePerContiguousRepetitions = 1e-4 /* seconds */;
 
     public static String operacao = "";
    
@@ -177,13 +180,10 @@ public class SumExecutionTimeTester {
     }
 
     public static void performExperimentsFor( final Double[] originalValues,
-            final boolean isWarmup) {
+            final boolean isWarmup, String tipoAmostra) {
     	
     	
         final Double[] sortedValues = originalValues.clone();
-        /*final Stopwatch stopwatchinsmoves = new Stopwatch();
-        InsertionWithMoves.sort(sortedValues);
-        double tempoinsmoves = stopwatchinsmoves.elapsedTime();*/
     	
         final ArrayList<Double> executionTimes = new ArrayList<Double>();
         final int contiguousRepetitions = contiguousRepetitionsFor(sortedValues);
@@ -197,21 +197,16 @@ public class SumExecutionTimeTester {
 
         final double median = medianOf(executionTimes);
 
-        if (!isWarmup)
-        	EscreverEmExcel(originalValues.length, median, repetitions);
+        if (!isWarmup){
+        	EscreverEmExcel(originalValues.length, median, repetitions, contiguousRepetitions,  tipoAmostra);
             out.println(
             		originalValues.length + "\t" + median + "\t" + repetitions + "\t"+ contiguousRepetitions);
-        /*-
-        out.println("Sum from 1 to " + limit + " = " + sum + " [" + median
-                + "s median time based on " + repetitions
-                + " repetitions of " + contiguousRepetitions
-                + " contiguous repetitions]");
-        */
+            }
     }
 
     public static void main(final String[] arguments)
             throws InterruptedException {
-    	out.println("Escolha o tipo de ordenação (1 - Insertion || 2 - Quicksort)");
+    	/*out.println("Escolha o tipo de ordenação (1 - Insertion || 2 - Quicksort)");
     	int op =  Integer.parseInt(in.nextLine());
     	if(op > 0 && op < 3){
     	if(op == 1)
@@ -219,19 +214,51 @@ public class SumExecutionTimeTester {
     	else if(op == 2)
     	{operacao = "quicksort";}
     	}
-    	else{out.println("Operação inválida"); System.exit(0);}
+    	else{out.println("Operação inválida"); System.exit(0);}*/
     	
-    	Double[] originalValues = new Double[0];
+    	Double[] originalValuesShuffled = new Double[0];
+    	Double[] originalValuesPartiallySorted = new Double[0];
+    	Double[] originalValuesSorted = new Double[0];
     	
-    	for(int i = 2, expoente = 0; expoente != 5; expoente++, i *= 2){
-    		final In in = new In("dados_sort/shuffled_"+i+".txt");
-    		originalValues = ArrayUtils.toObject(in.readAllDoubles());
+    	for(int ins = 0; ins <= 1; ins++)
+    	{
+    		if(ins == 0)
+    	    	{operacao = "insertion";}
+    	    	else if(ins == 1)
+    	    	{operacao = "quicksort";}
+    	    	
+    	
+    	for(int i = 2, expoente = 0; expoente != 23; expoente++, i *= 2){
     		
-    		// performExperimentsFor(originalValues, true);
-
-             performExperimentsFor(originalValues, false);
+    		final In inShuffled = new In("dados_sort/shuffled_"+i+".txt");
+    		
+    		originalValuesShuffled = ArrayUtils.toObject(inShuffled.readAllDoubles());
+    		
+    		 performExperimentsFor(originalValuesShuffled, true, "shuffled");
+             performExperimentsFor(originalValuesShuffled, false, "shuffled");
     	}
     	
+    	for(int i = 2, expoente = 0; expoente != 23; expoente++, i *= 2){
+    		
+    		final In inPartiallySorted = new In("dados_sort/partially_sorted_"+i+".txt");
+    		
+    		originalValuesPartiallySorted = ArrayUtils.toObject(inPartiallySorted.readAllDoubles());
+             
+             performExperimentsFor(originalValuesPartiallySorted, true, "PartiallySorted");
+             performExperimentsFor(originalValuesPartiallySorted, false, "PartiallySorted");
+    	}   
+    	
+    	for(int i = 2, expoente = 0; expoente != 23; expoente++, i *= 2){
+    		
+    		final In inSorted = new In("dados_sort/sorted_"+i+".txt");
+    		
+    		originalValuesSorted = ArrayUtils.toObject(inSorted.readAllDoubles());
+    		
+             performExperimentsFor(originalValuesSorted, true, "Sorted");
+             performExperimentsFor(originalValuesSorted, false, "Sorted");
+    	}
+    		
+    	}
     	
     	
        
