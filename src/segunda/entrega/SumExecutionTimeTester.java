@@ -63,30 +63,32 @@ public class SumExecutionTimeTester {
 		//Numero de linhas preenchidas
 		int numLinhas = sheet.getPhysicalNumberOfRows();
 		
-		sheet.setColumnWidth(0, 28*256);
-		sheet.setColumnWidth(1, 39*256);
-		sheet.setColumnWidth(2, 36*256);
-		sheet.setColumnWidth(3, 55*256);
+		sheet.setColumnWidth(0, 24*256);
+		sheet.setColumnWidth(1, 24*256);
+		sheet.setColumnWidth(2, 39*256);
+		sheet.setColumnWidth(3, 36*256);
+		sheet.setColumnWidth(4, 55*256);
 		
 		//Se o numero de linhas preenchidas for = 0 -> Criar cabeçalho
 		if(numLinhas == 0){
 		
 		Row header = sheet.createRow(0);
-		header.createCell(0).setCellValue("Tamanho e tipo da Amostra");
-		header.createCell(1).setCellValue("Tempo decorrido por ordenação(Mediana)");
-		header.createCell(2).setCellValue("Número de repetições por experiência");
-		header.createCell(3).setCellValue("Número de repetições por experiência (contiguousRepetitions)");
+		header.createCell(0).setCellValue("Tipo da Amostra");
+		header.createCell(1).setCellValue("Tamanho da Amostra");
+		header.createCell(2).setCellValue("Tempo decorrido por ordenação(Mediana)");
+		header.createCell(3).setCellValue("Número de experiências");
+		header.createCell(4).setCellValue("Número de repetições por experiência");
 		
 		numLinhas = sheet.getPhysicalNumberOfRows();
 		}
 		
 		//Registar resultado consoante numero de linhas preenchidas
 		Row dataRow = sheet.createRow(numLinhas);
-		
-	    dataRow.createCell(0).setCellValue(tamanho + " (" + tipoAmostra + ")");
-	    dataRow.createCell(1).setCellValue(tempo);
-	    dataRow.createCell(2).setCellValue(repeticoes);
-	    dataRow.createCell(3).setCellValue(contiguousRepetitions);
+		dataRow.createCell(0).setCellValue(tipoAmostra);
+	    dataRow.createCell(1).setCellValue(tamanho);
+	    dataRow.createCell(2).setCellValue(tempo);
+	    dataRow.createCell(3).setCellValue(repeticoes);
+	    dataRow.createCell(4).setCellValue(contiguousRepetitions);
 	    
 	    //Criar/Gravar ficheiro .xlsx
 	    
@@ -220,15 +222,16 @@ public class SumExecutionTimeTester {
     	Double[] originalValuesPartiallySorted = new Double[0];
     	Double[] originalValuesSorted = new Double[0];
     	
-    	for(int ins = 0; ins <= 1; ins++)
+    	for(int ins = 0; ins <= 5; ins++)
     	{
-    		if(ins == 0)
+    		if(ins == 0 || ins == 1 || ins == 2)
     	    	{operacao = "insertion";}
-    	    	else if(ins == 1)
+    	    	else if(ins == 3 || ins == 4 || ins == 5)
     	    	{operacao = "quicksort";}
+    		
     	    	
     	
-    	for(int i = 2, expoente = 0; expoente != 23; expoente++, i *= 2){
+    	for(int i = 2, expoente = 0; expoente != 18; expoente++, i *= 2){
     		
     		final In inShuffled = new In("dados_sort/shuffled_"+i+".txt");
     		
@@ -238,7 +241,7 @@ public class SumExecutionTimeTester {
              performExperimentsFor(originalValuesShuffled, false, "shuffled");
     	}
     	
-    	for(int i = 2, expoente = 0; expoente != 23; expoente++, i *= 2){
+    	for(int i = 2, expoente = 0; expoente != 18; expoente++, i *= 2){
     		
     		final In inPartiallySorted = new In("dados_sort/partially_sorted_"+i+".txt");
     		
@@ -248,7 +251,7 @@ public class SumExecutionTimeTester {
              performExperimentsFor(originalValuesPartiallySorted, false, "PartiallySorted");
     	}   
     	
-    	for(int i = 2, expoente = 0; expoente != 23; expoente++, i *= 2){
+    	for(int i = 2, expoente = 0; expoente != 18; expoente++, i *= 2){
     		
     		final In inSorted = new In("dados_sort/sorted_"+i+".txt");
     		
