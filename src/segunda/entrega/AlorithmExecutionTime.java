@@ -1,6 +1,5 @@
 package segunda.entrega;
 
-import static primeira.entrega.Tools.in;
 import static primeira.entrega.Tools.out;
 
 import primeira.entrega.Stopwatch;
@@ -105,13 +104,16 @@ public class AlorithmExecutionTime{
 	    
 }
 	
-   
+    //Orçamento de tempo por experiência. Cada experiência é repetida até ser gasto o orçamento.
     public static final double timeBudgetPerExperiment = 5.0 /* seconds */;
 
+    //Tempo minimo por repetição contígua
     public static final double minimumTimePerContiguousRepetitions = 1e-4 /* seconds */;
 
+    //Guarda qual o algoritmo que vai ser executada
     public static String operacao = "";
    
+    //Calcula a mediana dos valores num array. Neste caso a mediana dos tempos de execução
     public static double medianOf(final ArrayList<Double> values) {
         final int size = values.size();
 
@@ -123,6 +125,7 @@ public class AlorithmExecutionTime{
             return values.get(size / 2);
     }
 
+    //Algortimo de ordenação por inserção
     public static Double[] insertion(final Double[] sortedValues) {
        
     	Insertion.sort(sortedValues);
@@ -130,6 +133,7 @@ public class AlorithmExecutionTime{
         return sortedValues;
     }
     
+    //Algoritmo de ordenação rápida
     public static Double[] quicksort(final Double[] sortedValues) {
         
     	Quicksort.sort(sortedValues);
@@ -137,10 +141,13 @@ public class AlorithmExecutionTime{
         return sortedValues;
     }
 
+    //Guarda o array de valores já ordenados
     private static Double[] sortedAlgorithm;
 
+    //EStima o número de repetições contíguas necessárias
     public static int contiguousRepetitionsFor(final Double[] sortedValues) {
     	
+    	//Se Inserção
     	if(operacao == "insertion"){
     		final Stopwatch stopwatch = new Stopwatch();
     		int contiguousRepetitions = 0;
@@ -151,6 +158,7 @@ public class AlorithmExecutionTime{
 
     		return contiguousRepetitions;
     	}
+    	//Se Quicksort
     	else{
     		final Stopwatch stopwatch = new Stopwatch();
             int contiguousRepetitions = 0;
@@ -163,6 +171,8 @@ public class AlorithmExecutionTime{
     	}
     }
 
+    //Executa repetições contíguas de uma experiência para 
+    //obter os tempos de execução do algoritmo a ser testado
     public static double executionTimeFor(final Double[] sortedValues,
             final int contiguousRepetitions) {
     	if(operacao == "insertion"){
@@ -180,7 +190,9 @@ public class AlorithmExecutionTime{
     	    return stopwatch.elapsedTime() / contiguousRepetitions;
     	}
     }
-
+    
+    //Executa experiências para obter uam estimativa de tempos de execução dos algoritmos
+    //até o orçamento de tempo ser esgotado
     public static void performExperimentsFor( final Double[] originalValues,
             final boolean isWarmup, String tipoAmostra) {
     	
@@ -218,54 +230,61 @@ public class AlorithmExecutionTime{
     	}
     	else{out.println("Operação inválida"); System.exit(0);}*/
     	
+    	//Arrays que vão guardar os valores contidos nos ficheiros pré criados 
+    	//com amostras aleatórias, parcialmente ordenadas e ordenadas
     	Double[] originalValuesShuffled = new Double[0];
     	Double[] originalValuesPartiallySorted = new Double[0];
     	Double[] originalValuesSorted = new Double[0];
     	
+    	//Executa várias vezes cada algoritmo
     	for(int ins = 0; ins <= 5; ins++)
     	{
     		if(ins == 0 || ins == 1 || ins == 2)
     	    	{operacao = "insertion";}
     	    	else if(ins == 3 || ins == 4 || ins == 5)
     	    	{operacao = "quicksort";}
-    		
     	    	
-    	
+    	//Executar o algoritmo a ser estudado nos vários tamanhos de amostras de dados aleatórios
+    	//Warmup
+    	for(int i = 2, expoente = 0; expoente != 18; expoente++, i *= 2){
+        		
+        	final In inShuffled = new In("dados_sort/shuffled_"+i+".txt");	
+        	originalValuesShuffled = ArrayUtils.toObject(inShuffled.readAllDoubles());
+        		
+        	 performExperimentsFor(originalValuesShuffled, true, "shuffled");
+                 
+        }
+    	//Experiências	
     	for(int i = 2, expoente = 0; expoente != 18; expoente++, i *= 2){
     		
+    		//Carregar os dados do respectivo ficheiro e guardar no array
     		final In inShuffled = new In("dados_sort/shuffled_"+i+".txt");
-    		
     		originalValuesShuffled = ArrayUtils.toObject(inShuffled.readAllDoubles());
     		
-    		 performExperimentsFor(originalValuesShuffled, true, "shuffled");
-             performExperimentsFor(originalValuesShuffled, false, "shuffled");
+    		performExperimentsFor(originalValuesShuffled, false, "shuffled");
     	}
     	
+    	//Executar o algoritmo a ser estudado nos vários tamanhos de amostras de dados parcialmente ordenados
     	for(int i = 2, expoente = 0; expoente != 18; expoente++, i *= 2){
     		
+    		//Carregar os dados do respectivo ficheiro e guardar no array
     		final In inPartiallySorted = new In("dados_sort/partially_sorted_"+i+".txt");
-    		
     		originalValuesPartiallySorted = ArrayUtils.toObject(inPartiallySorted.readAllDoubles());
              
-             performExperimentsFor(originalValuesPartiallySorted, true, "PartiallySorted");
              performExperimentsFor(originalValuesPartiallySorted, false, "PartiallySorted");
     	}   
     	
+    	//Executar o algoritmo a ser estudado nos vários tamanhos de amostras de dados ordenados
     	for(int i = 2, expoente = 0; expoente != 18; expoente++, i *= 2){
     		
+    		//Carregar os dados do respectivo ficheiro e guardar no array
     		final In inSorted = new In("dados_sort/sorted_"+i+".txt");
-    		
     		originalValuesSorted = ArrayUtils.toObject(inSorted.readAllDoubles());
     		
-             performExperimentsFor(originalValuesSorted, true, "Sorted");
              performExperimentsFor(originalValuesSorted, false, "Sorted");
     	}
     		
     	}
-    	
-    	
-       
-           
     }
 
 }
