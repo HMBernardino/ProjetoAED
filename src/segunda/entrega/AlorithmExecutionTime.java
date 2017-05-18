@@ -19,9 +19,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import edu.princeton.cs.algs4.In;
 
-public class SumExecutionTimeTester {
+public class AlorithmExecutionTime{
 	
-	
+
 	public static void EscreverEmExcel(int tamanho, double tempo, long repeticoes, long contiguousRepetitions, String tipoAmostra){
 		XSSFWorkbook workbook;
 		XSSFSheet sheet;
@@ -71,7 +71,7 @@ public class SumExecutionTimeTester {
 		
 		//Se o numero de linhas preenchidas for = 0 -> Criar cabeçalho
 		if(numLinhas == 0){
-		
+	
 		Row header = sheet.createRow(0);
 		header.createCell(0).setCellValue("Tipo da Amostra");
 		header.createCell(1).setCellValue("Tamanho da Amostra");
