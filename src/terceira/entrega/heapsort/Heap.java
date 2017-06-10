@@ -1,4 +1,4 @@
-package terceira.entrega;
+package terceira.entrega.heapsort;
 
 public final class Heap {
 

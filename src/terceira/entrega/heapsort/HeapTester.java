@@ -1,4 +1,4 @@
-package terceira.entrega;
+package terceira.entrega.heapsort;
 
 import static java.lang.System.out;
 
