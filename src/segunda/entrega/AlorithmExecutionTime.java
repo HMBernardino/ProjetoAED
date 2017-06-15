@@ -73,8 +73,8 @@ public class AlorithmExecutionTime {
 
 				Row header = sheet.createRow(0);
 				header.createCell(0).setCellValue("Tipo da Amostra");
-				header.createCell(1).setCellValue("size da Amostra");
-				header.createCell(2).setCellValue("time decorrido por ordenação(Mediana)");
+				header.createCell(1).setCellValue("Tamanho da Amostra");
+				header.createCell(2).setCellValue("Tempo decorrido por ordenação(Mediana)");
 				header.createCell(3).setCellValue("Número de experiências");
 				header.createCell(4).setCellValue("Número de repetições por experiência");
 

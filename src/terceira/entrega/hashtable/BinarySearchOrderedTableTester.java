@@ -88,8 +88,8 @@ public class BinarySearchOrderedTableTester {
 			if (numberOfLines == 0) {
 
 				Row header = sheet.createRow(0);
-				header.createCell(0).setCellValue("size da Amostra");
-				header.createCell(1).setCellValue("time decorrido por ordenação(Mediana)");
+				header.createCell(0).setCellValue("Tamanho da Amostra");
+				header.createCell(1).setCellValue("Tempo decorrido por ordenação(Mediana)");
 				header.createCell(2).setCellValue("Número de experiências");
 				header.createCell(3).setCellValue("Número de repetições por experiência");
 
