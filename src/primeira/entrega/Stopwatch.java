@@ -1,19 +1,19 @@
 package primeira.entrega;
 
-public class Stopwatch { 
+public class Stopwatch {
 
-    private final long start;
+	private final long start;
 
-    public Stopwatch() {
-        start = System.nanoTime();
-    } 
+	public Stopwatch() {
+		start = System.nanoTime();
+	}
 
-    public double elapsedTime() {
-        long now = System.nanoTime();
-        return (now - start) / 1000_000_000.0;
-    }
+	public double elapsedTime() {
+		long now = System.nanoTime();
+		return (now - start) / 1000_000_000.0;
+	}
 
-} 
+}
 
 /*
  * Copyright 2015-2017, Robert Sedgewick and Kevin Wayne.

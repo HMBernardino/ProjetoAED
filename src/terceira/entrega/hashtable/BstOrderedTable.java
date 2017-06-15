@@ -8,486 +8,479 @@ import java.util.NoSuchElementException;
 
 public class BstOrderedTable<Key extends Comparable<? super Key>, Value> {
 
-    private Node<Key, Value> root;
+	private Node<Key, Value> root;
 
-    private static class Node<Key, Value> {
+	private static class Node<Key, Value> {
 
-        private final Key key;
-        private Value value;
-        private Node<Key, Value> left = null;
-        private Node<Key, Value> right = null;
-        private int size = 1;
+		private final Key key;
+		private Value value;
+		private Node<Key, Value> left = null;
+		private Node<Key, Value> right = null;
+		private int size = 1;
 
-        public Node(final Key key, final Value value) {
-            this.key = key;
-            this.value = value;
-        }
+		public Node(final Key key, final Value value) {
+			this.key = key;
+			this.value = value;
+		}
 
-    }
+	}
 
-    public BstOrderedTable() {
-        root = null;
+	public BstOrderedTable() {
+		root = null;
 
-        checkInvariant();
-    }
+		checkInvariant();
+	}
 
-    public int size() {
-        checkInvariant();
+	public int size() {
+		checkInvariant();
 
-        return sizeOf(root);
-    }
+		return sizeOf(root);
+	}
 
-    public boolean isEmpty() {
-        checkInvariant();
+	public boolean isEmpty() {
+		checkInvariant();
 
-        return size() == 0;
-    }
+		return size() == 0;
+	}
 
-    public boolean contains(final Key key) {
-        checkInvariant();
+	public boolean contains(final Key key) {
+		checkInvariant();
 
-        return valueFor(key) != null;
-    }
+		return valueFor(key) != null;
+	}
 
-    public Value valueFor(final Key key) {
-        checkInvariant();
+	public Value valueFor(final Key key) {
+		checkInvariant();
 
-        return valueFor(key, root);
-    }
+		return valueFor(key, root);
+	}
 
-    public Iterable<Key> keys() {
-        checkInvariant();
+	public Iterable<Key> keys() {
+		checkInvariant();
 
-        return keysInRange(minimum(), maximum());
-    }
+		return keysInRange(minimum(), maximum());
+	}
 
-    public void put(final Key key, final Value value) {
-        checkInvariant();
+	public void put(final Key key, final Value value) {
+		checkInvariant();
 
-        if (value == null) {
-            delete(key);
-            return;
-        }
+		if (value == null) {
+			delete(key);
+			return;
+		}
 
-        root = putIn(key, value, root);
+		root = putIn(key, value, root);
 
-        checkInvariant();
-    }
+		checkInvariant();
+	}
 
-    public void delete(final Key key) {
-        checkInvariant();
+	public void delete(final Key key) {
+		checkInvariant();
 
-        root = deleteFrom(key, root);
+		root = deleteFrom(key, root);
 
-        checkInvariant();
-    }
+		checkInvariant();
+	}
 
-    public int rankOf(final Key key) {
-        checkInvariant();
+	public int rankOf(final Key key) {
+		checkInvariant();
 
-        return rankOf(key, root);
-    }
+		return rankOf(key, root);
+	}
 
-    public Key minimum() {
-        checkInvariant();
+	public Key minimum() {
+		checkInvariant();
 
-        if (isEmpty())
-            return null;
+		if (isEmpty())
+			return null;
 
-        return minimumNodeOf(root).key;
-    }
+		return minimumNodeOf(root).key;
+	}
 
-    public Key maximum() {
-        checkInvariant();
+	public Key maximum() {
+		checkInvariant();
 
-        if (isEmpty())
-            return null;
+		if (isEmpty())
+			return null;
 
-        return maximumNodeOf(root).key;
-    }
+		return maximumNodeOf(root).key;
+	}
 
-    public Key keyWithRank(final int rank) {
-        checkInvariant();
+	public Key keyWithRank(final int rank) {
+		checkInvariant();
 
-        if (rank < 0 || rank >= size())
-            return null;
+		if (rank < 0 || rank >= size())
+			return null;
 
-        final Node<Key, Value> nodeWithRank = nodeWithRankIn(rank, root);
+		final Node<Key, Value> nodeWithRank = nodeWithRankIn(rank, root);
 
-        return nodeWithRank.key;
-    }
+		return nodeWithRank.key;
+	}
 
-    public Key floorOf(final Key key) {
-        checkInvariant();
+	public Key floorOf(final Key key) {
+		checkInvariant();
 
-        final Node<Key, Value> floorNode = floorNodeOf(key, root);
+		final Node<Key, Value> floorNode = floorNodeOf(key, root);
 
-        if (floorNode == null)
-            return null;
+		if (floorNode == null)
+			return null;
 
-        return floorNode.key;
-    }
+		return floorNode.key;
+	}
 
-    public Key ceilingOf(final Key key) {
-        checkInvariant();
+	public Key ceilingOf(final Key key) {
+		checkInvariant();
 
-        Node<Key, Value> ceilingNode = ceilingNodeOf(key, root);
+		Node<Key, Value> ceilingNode = ceilingNodeOf(key, root);
 
-        if (ceilingNode == null)
-            return null;
+		if (ceilingNode == null)
+			return null;
 
-        return ceilingNode.key;
-    }
+		return ceilingNode.key;
+	}
 
-    public int sizeOfRange(final Key low, final Key high) {
-        checkInvariant();
+	public int sizeOfRange(final Key low, final Key high) {
+		checkInvariant();
 
-        if (low.compareTo(high) > 0)
-            return 0;
+		if (low.compareTo(high) > 0)
+			return 0;
 
-        if (contains(high))
-            return rankOf(high) - rankOf(low) + 1;
+		if (contains(high))
+			return rankOf(high) - rankOf(low) + 1;
 
-        return rankOf(high) - rankOf(low);
-    }
+		return rankOf(high) - rankOf(low);
+	}
 
-    public Iterable<Key> keysInRange(final Key low, final Key high) {
-        checkInvariant();
+	public Iterable<Key> keysInRange(final Key low, final Key high) {
+		checkInvariant();
 
-        Queue<Key> keys = new Queue<Key>();
+		Queue<Key> keys = new Queue<Key>();
 
-        enqueueKeysInRange(keys, low, high, root);
+		enqueueKeysInRange(keys, low, high, root);
 
-        return keys;
-    }
+		return keys;
+	}
 
-    public int height() {
-        checkInvariant();
+	public int height() {
+		checkInvariant();
 
-        return heightOf(root);
-    }
+		return heightOf(root);
+	}
 
-    public Iterable<Key> keysInLevelOrder() {
-        checkInvariant();
+	public Iterable<Key> keysInLevelOrder() {
+		checkInvariant();
 
-        Queue<Key> keys = new Queue<Key>();
+		Queue<Key> keys = new Queue<Key>();
 
-        Queue<Node<Key, Value>> nodes = new Queue<Node<Key, Value>>();
+		Queue<Node<Key, Value>> nodes = new Queue<Node<Key, Value>>();
 
-        nodes.enqueue(root);
-        while (!nodes.isEmpty()) {
-            final Node<Key, Value> node = nodes.dequeue();
+		nodes.enqueue(root);
+		while (!nodes.isEmpty()) {
+			final Node<Key, Value> node = nodes.dequeue();
 
-            if (node == null)
-                continue;
+			if (node == null)
+				continue;
 
-            keys.enqueue(node.key);
+			keys.enqueue(node.key);
 
-            nodes.enqueue(node.left);
-            nodes.enqueue(node.right);
-        }
-        return keys;
-    }
+			nodes.enqueue(node.left);
+			nodes.enqueue(node.right);
+		}
+		return keys;
+	}
 
-    public void deleteMinimum() {
-        checkInvariant();
+	public void deleteMinimum() {
+		checkInvariant();
 
-        if (isEmpty())
-            throw new NoSuchElementException("Symbol table underflow");
+		if (isEmpty())
+			throw new NoSuchElementException("Symbol table underflow");
 
-        root = deleteMinimumOf(root);
+		root = deleteMinimumOf(root);
 
-        checkInvariant();
-    }
+		checkInvariant();
+	}
 
-    public void deleteMaximum() {
-        checkInvariant();
+	public void deleteMaximum() {
+		checkInvariant();
 
-        if (isEmpty())
-            throw new NoSuchElementException("Symbol table underflow");
+		if (isEmpty())
+			throw new NoSuchElementException("Symbol table underflow");
 
-        root = deleteMaximumOf(root);
+		root = deleteMaximumOf(root);
 
-        checkInvariant();
-    }
+		checkInvariant();
+	}
 
-    private int sizeOf(final Node<Key, Value> tree) {
-        if (tree == null)
-            return 0;
+	private int sizeOf(final Node<Key, Value> tree) {
+		if (tree == null)
+			return 0;
 
-        return tree.size;
-    }
+		return tree.size;
+	}
 
-    private Value valueFor(final Key key, final Node<Key, Value> tree) {
-        if (tree == null)
-            return null;
+	private Value valueFor(final Key key, final Node<Key, Value> tree) {
+		if (tree == null)
+			return null;
 
-        final int comparison = key.compareTo(tree.key);
-        
-        if (comparison < 0)
-            return valueFor(key, tree.left);
-        if (comparison > 0)
-            return valueFor(key, tree.right);
-        
-        return tree.value;
-    }
+		final int comparison = key.compareTo(tree.key);
 
-    private Node<Key, Value> putIn(final Key key, final Value value,
-            final Node<Key, Value> tree) {
-        if (tree == null)
-            return new Node<Key, Value>(key, value);
+		if (comparison < 0)
+			return valueFor(key, tree.left);
+		if (comparison > 0)
+			return valueFor(key, tree.right);
 
-        final int comparison = key.compareTo(tree.key);
-        
-        if (comparison < 0)
-            tree.left = putIn(key, value, tree.left);
-        else if (comparison > 0)
-            tree.right = putIn(key, value, tree.right);
-        else
-            tree.value = value;
+		return tree.value;
+	}
 
-        tree.size = 1 + sizeOf(tree.left) + sizeOf(tree.right);
+	private Node<Key, Value> putIn(final Key key, final Value value, final Node<Key, Value> tree) {
+		if (tree == null)
+			return new Node<Key, Value>(key, value);
 
-        return tree;
-    }
+		final int comparison = key.compareTo(tree.key);
 
-    private Node<Key, Value> deleteFrom(final Key key, Node<Key, Value> tree) {
-        if (tree == null)
-            return null;
+		if (comparison < 0)
+			tree.left = putIn(key, value, tree.left);
+		else if (comparison > 0)
+			tree.right = putIn(key, value, tree.right);
+		else
+			tree.value = value;
 
-        final int comparison = key.compareTo(tree.key);
-        
-        if (comparison < 0)
-            tree.left = deleteFrom(key, tree.left);
-        else if (comparison > 0)
-            tree.right = deleteFrom(key, tree.right);
-        else {
-            if (tree.right == null)
-                return tree.left;
-            if (tree.left == null)
-                return tree.right;
+		tree.size = 1 + sizeOf(tree.left) + sizeOf(tree.right);
 
-            final Node<Key, Value> originalTree = tree;
+		return tree;
+	}
 
-            tree = minimumNodeOf(originalTree.right);
-            tree.right = deleteMinimumOf(originalTree.right);
-            tree.left = originalTree.left;
-        }
+	private Node<Key, Value> deleteFrom(final Key key, Node<Key, Value> tree) {
+		if (tree == null)
+			return null;
 
-        tree.size = 1 + sizeOf(tree.left) + sizeOf(tree.right);
+		final int comparison = key.compareTo(tree.key);
 
-        return tree;
-    }
+		if (comparison < 0)
+			tree.left = deleteFrom(key, tree.left);
+		else if (comparison > 0)
+			tree.right = deleteFrom(key, tree.right);
+		else {
+			if (tree.right == null)
+				return tree.left;
+			if (tree.left == null)
+				return tree.right;
 
-    private int rankOf(final Key key, final Node<Key, Value> tree) {
-        if (tree == null)
-            return 0;
+			final Node<Key, Value> originalTree = tree;
 
-        final int comparison = key.compareTo(tree.key);
+			tree = minimumNodeOf(originalTree.right);
+			tree.right = deleteMinimumOf(originalTree.right);
+			tree.left = originalTree.left;
+		}
 
-        if (comparison < 0)
-            return rankOf(key, tree.left);
+		tree.size = 1 + sizeOf(tree.left) + sizeOf(tree.right);
 
-        if (comparison > 0)
-            return 1 + sizeOf(tree.left) + rankOf(key, tree.right);
+		return tree;
+	}
 
-        return sizeOf(tree.left);
-    }
+	private int rankOf(final Key key, final Node<Key, Value> tree) {
+		if (tree == null)
+			return 0;
 
-    private Node<Key, Value> minimumNodeOf(final Node<Key, Value> tree) {
-        if (tree.left == null)
-            return tree;
+		final int comparison = key.compareTo(tree.key);
 
-        return minimumNodeOf(tree.left);
-    }
+		if (comparison < 0)
+			return rankOf(key, tree.left);
 
-    private Node<Key, Value> maximumNodeOf(final Node<Key, Value> tree) {
-        if (tree.right == null)
-            return tree;
+		if (comparison > 0)
+			return 1 + sizeOf(tree.left) + rankOf(key, tree.right);
 
-        return maximumNodeOf(tree.right);
-    }
+		return sizeOf(tree.left);
+	}
 
-    private Node<Key, Value> nodeWithRankIn(final int rank,
-            final Node<Key, Value> tree) {
-        if (tree == null)
-            return null;
+	private Node<Key, Value> minimumNodeOf(final Node<Key, Value> tree) {
+		if (tree.left == null)
+			return tree;
 
-        final int rankOfTreeRoot = sizeOf(tree.left);
+		return minimumNodeOf(tree.left);
+	}
 
-        if (rankOfTreeRoot > rank)
-            return nodeWithRankIn(rank, tree.left);
+	private Node<Key, Value> maximumNodeOf(final Node<Key, Value> tree) {
+		if (tree.right == null)
+			return tree;
 
-        if (rankOfTreeRoot < rank)
-            return nodeWithRankIn(rank - rankOfTreeRoot - 1, tree.right);
+		return maximumNodeOf(tree.right);
+	}
 
-        return tree;
-    }
+	private Node<Key, Value> nodeWithRankIn(final int rank, final Node<Key, Value> tree) {
+		if (tree == null)
+			return null;
 
-    private Node<Key, Value> floorNodeOf(final Key key,
-            final Node<Key, Value> tree) {
-        if (tree == null)
-            return null;
+		final int rankOfTreeRoot = sizeOf(tree.left);
 
-        final int comparison = key.compareTo(tree.key);
+		if (rankOfTreeRoot > rank)
+			return nodeWithRankIn(rank, tree.left);
 
-        if (comparison == 0)
-            return tree;
+		if (rankOfTreeRoot < rank)
+			return nodeWithRankIn(rank - rankOfTreeRoot - 1, tree.right);
 
-        if (comparison < 0)
-            return floorNodeOf(key, tree.left);
+		return tree;
+	}
 
-        final Node<Key, Value> floorNode = floorNodeOf(key, tree.right);
-        
-        if (floorNode != null)
-            return floorNode;
-        
-        return tree;
-    }
+	private Node<Key, Value> floorNodeOf(final Key key, final Node<Key, Value> tree) {
+		if (tree == null)
+			return null;
 
-    private Node<Key, Value> ceilingNodeOf(final Key key,
-            final Node<Key, Value> tree) {
-        if (tree == null)
-            return null;
+		final int comparison = key.compareTo(tree.key);
 
-        final int comparison = key.compareTo(tree.key);
+		if (comparison == 0)
+			return tree;
 
-        if (comparison == 0)
-            return tree;
+		if (comparison < 0)
+			return floorNodeOf(key, tree.left);
 
-        if (comparison > 0)
-            return ceilingNodeOf(key, tree.right);
+		final Node<Key, Value> floorNode = floorNodeOf(key, tree.right);
 
-        final Node<Key, Value> ceilingNode = ceilingNodeOf(key, tree.left);
-        
-        if (ceilingNode != null)
-            return ceilingNode;
+		if (floorNode != null)
+			return floorNode;
 
-        return tree;
-    }
+		return tree;
+	}
 
-    private void enqueueKeysInRange(final Queue<Key> keys, final Key low,
-            final Key high, final Node<Key, Value> tree) {
-        if (tree == null)
-            return;
+	private Node<Key, Value> ceilingNodeOf(final Key key, final Node<Key, Value> tree) {
+		if (tree == null)
+			return null;
 
-        final int comparisonWithLow = low.compareTo(tree.key);
-        final int comparisonWithHigh = high.compareTo(tree.key);
+		final int comparison = key.compareTo(tree.key);
 
-        if (comparisonWithLow < 0)
-            enqueueKeysInRange(keys, low, high, tree.left);
+		if (comparison == 0)
+			return tree;
 
-        if (comparisonWithLow <= 0 && comparisonWithHigh >= 0)
-            keys.enqueue(tree.key);
+		if (comparison > 0)
+			return ceilingNodeOf(key, tree.right);
 
-        if (comparisonWithHigh > 0)
-            enqueueKeysInRange(keys, low, high, tree.right);
-    }
+		final Node<Key, Value> ceilingNode = ceilingNodeOf(key, tree.left);
 
-    private Node<Key, Value> deleteMinimumOf(final Node<Key, Value> tree) {
-        if (tree.left == null)
-            return tree.right;
+		if (ceilingNode != null)
+			return ceilingNode;
 
-        tree.left = deleteMinimumOf(tree.left);
+		return tree;
+	}
 
-        tree.size = 1 + sizeOf(tree.left) + sizeOf(tree.right);
+	private void enqueueKeysInRange(final Queue<Key> keys, final Key low, final Key high, final Node<Key, Value> tree) {
+		if (tree == null)
+			return;
 
-        return tree;
-    }
+		final int comparisonWithLow = low.compareTo(tree.key);
+		final int comparisonWithHigh = high.compareTo(tree.key);
 
-    private Node<Key, Value> deleteMaximumOf(final Node<Key, Value> tree) {
-        if (tree.right == null)
-            return tree.left;
+		if (comparisonWithLow < 0)
+			enqueueKeysInRange(keys, low, high, tree.left);
 
-        tree.right = deleteMaximumOf(tree.right);
+		if (comparisonWithLow <= 0 && comparisonWithHigh >= 0)
+			keys.enqueue(tree.key);
 
-        tree.size = 1 + sizeOf(tree.left) + sizeOf(tree.right);
+		if (comparisonWithHigh > 0)
+			enqueueKeysInRange(keys, low, high, tree.right);
+	}
 
-        return tree;
-    }
+	private Node<Key, Value> deleteMinimumOf(final Node<Key, Value> tree) {
+		if (tree.left == null)
+			return tree.right;
 
-    private int heightOf(final Node<Key, Value> tree) {
-        if (tree == null)
-            return -1;
+		tree.left = deleteMinimumOf(tree.left);
 
-        return 1 + Math.max(heightOf(tree.left), heightOf(tree.right));
-    }
+		tree.size = 1 + sizeOf(tree.left) + sizeOf(tree.right);
 
-    private void checkInvariant() {
-        assert isBst() : "Binary tree not in symmetric order.";
-        assert isSizeConsistent() : "Subtree sizes of binary tree are not consistent.";
-        assert isRankConsistent() : "Ranks of binary tree are not consistent.";
-    }
+		return tree;
+	}
 
-    private boolean isBst() {
-        return isBstBetween(root, null, null);
-    }
+	private Node<Key, Value> deleteMaximumOf(final Node<Key, Value> tree) {
+		if (tree.right == null)
+			return tree.left;
 
-    private boolean isBstBetween(final Node<Key, Value> tree,
-            final Key minimum, final Key maximum) {
-        if (tree == null)
-            return true;
+		tree.right = deleteMaximumOf(tree.right);
 
-        if (minimum != null && tree.key.compareTo(minimum) <= 0)
-            return false;
+		tree.size = 1 + sizeOf(tree.left) + sizeOf(tree.right);
 
-        if (maximum != null && tree.key.compareTo(maximum) >= 0)
-            return false;
+		return tree;
+	}
 
-        return isBstBetween(tree.left, minimum, tree.key)
-                && isBstBetween(tree.right, tree.key, maximum);
-    }
+	private int heightOf(final Node<Key, Value> tree) {
+		if (tree == null)
+			return -1;
 
-    private boolean isSizeConsistent() {
-        return isSizeConsistent(root);
-    }
+		return 1 + Math.max(heightOf(tree.left), heightOf(tree.right));
+	}
 
-    private boolean isSizeConsistent(final Node<Key, Value> tree) {
-        if (tree == null)
-            return true;
+	private void checkInvariant() {
+		assert isBst() : "Binary tree not in symmetric order.";
+		assert isSizeConsistent() : "Subtree sizes of binary tree are not consistent.";
+		assert isRankConsistent() : "Ranks of binary tree are not consistent.";
+	}
 
-        if (tree.size != 1 + sizeOf(tree.left) + sizeOf(tree.right))
-            return false;
+	private boolean isBst() {
+		return isBstBetween(root, null, null);
+	}
 
-        return isSizeConsistent(tree.left) && isSizeConsistent(tree.right);
-    }
+	private boolean isBstBetween(final Node<Key, Value> tree, final Key minimum, final Key maximum) {
+		if (tree == null)
+			return true;
 
-    private boolean isRankConsistent() {
-        for (int rank = 0; rank != sizeOf(root); rank++)
-            if (rank != rankOf(nodeWithRankIn(rank, root).key, root))
-                return false;
+		if (minimum != null && tree.key.compareTo(minimum) <= 0)
+			return false;
 
-        if (root != null) {
-            Queue<Key> keys = new Queue<Key>();
+		if (maximum != null && tree.key.compareTo(maximum) >= 0)
+			return false;
 
-            enqueueKeysInRange(keys, minimumNodeOf(root).key, maximumNodeOf(root).key, root);
+		return isBstBetween(tree.left, minimum, tree.key) && isBstBetween(tree.right, tree.key, maximum);
+	}
 
-            for (Key key : keys)
-                if (key.compareTo(nodeWithRankIn(rankOf(key, root), root).key) != 0)
-                    return false;
-        }
-        
-        return true;
-    }
+	private boolean isSizeConsistent() {
+		return isSizeConsistent(root);
+	}
 
-    public static void main(String[] args) {
-        final BstOrderedTable<String, Integer> table = new BstOrderedTable<String, Integer>();
+	private boolean isSizeConsistent(final Node<Key, Value> tree) {
+		if (tree == null)
+			return true;
 
-        for (int i = 0; !StdIn.isEmpty(); i++) {
-            final String key = StdIn.readString();
-            table.put(key, i);
-        }
+		if (tree.size != 1 + sizeOf(tree.left) + sizeOf(tree.right))
+			return false;
 
-        StdOut.println("Level order:");
-        for (String key : table.keysInLevelOrder())
-            StdOut.println(key + " " + table.valueFor(key));
+		return isSizeConsistent(tree.left) && isSizeConsistent(tree.right);
+	}
 
-        StdOut.println();
+	private boolean isRankConsistent() {
+		for (int rank = 0; rank != sizeOf(root); rank++)
+			if (rank != rankOf(nodeWithRankIn(rank, root).key, root))
+				return false;
 
-        StdOut.println("Key order:");
-        for (String key : table.keys())
-            StdOut.println(key + " " + table.valueFor(key));
-    }
+		if (root != null) {
+			Queue<Key> keys = new Queue<Key>();
+
+			enqueueKeysInRange(keys, minimumNodeOf(root).key, maximumNodeOf(root).key, root);
+
+			for (Key key : keys)
+				if (key.compareTo(nodeWithRankIn(rankOf(key, root), root).key) != 0)
+					return false;
+		}
+
+		return true;
+	}
+
+	public static void main(String[] args) {
+		final BstOrderedTable<String, Integer> table = new BstOrderedTable<String, Integer>();
+
+		for (int i = 0; !StdIn.isEmpty(); i++) {
+			final String key = StdIn.readString();
+			table.put(key, i);
+		}
+
+		StdOut.println("Level order:");
+		for (String key : table.keysInLevelOrder())
+			StdOut.println(key + " " + table.valueFor(key));
+
+		StdOut.println();
+
+		StdOut.println("Key order:");
+		for (String key : table.keys())
+			StdOut.println(key + " " + table.valueFor(key));
+	}
 
 }
 

@@ -6,29 +6,26 @@ import static segunda.entrega.Utilities.swap;
 
 public final class InsertionSort {
 
-    private InsertionSort() {
-        throw new RuntimeException("Attempt to instantiate package-class");
-    }
+	private InsertionSort() {
+		throw new RuntimeException("Attempt to instantiate package-class");
+	}
 
-    public static <Item extends Comparable<? super Item>> void sort(
-            final Item[] values) {
-        for (int i = 1; i < values.length; i++)
-            for (int j = i; j != 0 && isLess(values[j], values[j - 1]); j--)
-                swap(values, j - 1, j);
+	public static <Item extends Comparable<? super Item>> void sort(final Item[] values) {
+		for (int i = 1; i < values.length; i++)
+			for (int j = i; j != 0 && isLess(values[j], values[j - 1]); j--)
+				swap(values, j - 1, j);
 
-        assert isIncreasing(
-                values) : "Array should be increasing after sorting.";
-    }
+		assert isIncreasing(values) : "Array should be increasing after sorting.";
+	}
 
-    public static <Item extends Comparable<? super Item>> void sort(
-            final Item[] values, final int first, final int last) {
-        for (int i = first + 1; i <= last; i++)
-            for (int j = i; j != first && isLess(values[j], values[j - 1]); j--)
-                swap(values, j, j - 1);
+	public static <Item extends Comparable<? super Item>> void sort(final Item[] values, final int first,
+			final int last) {
+		for (int i = first + 1; i <= last; i++)
+			for (int j = i; j != first && isLess(values[j], values[j - 1]); j--)
+				swap(values, j, j - 1);
 
-        assert isIncreasing(values, first,
-                last) : "Array segment should be increasing after sorting.";
-    }
+		assert isIncreasing(values, first, last) : "Array segment should be increasing after sorting.";
+	}
 
 }
 

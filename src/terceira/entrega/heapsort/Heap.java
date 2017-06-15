@@ -2,62 +2,57 @@ package terceira.entrega.heapsort;
 
 public final class Heap {
 
-    private Heap() {
-        throw new RuntimeException("Attempt to instantiate package-class");
-    }
+	private Heap() {
+		throw new RuntimeException("Attempt to instantiate package-class");
+	}
 
-    public static <Item extends Comparable<? super Item>> void sort(
-            final Item[] values) {
-        int length = values.length;
+	public static <Item extends Comparable<? super Item>> void sort(final Item[] values) {
+		int length = values.length;
 
-        for (int k = length / 2; k >= 1; k--)
-            sink(values, k, length);
+		for (int k = length / 2; k >= 1; k--)
+			sink(values, k, length);
 
-        while (length > 1) {
-            swap(values, 1, length--);
-            sink(values, 1, length);
-        }
-        
-        assert isIncreasing(
-                values) : "Array should be increasing after sorting.";
-    }
+		while (length > 1) {
+			swap(values, 1, length--);
+			sink(values, 1, length);
+		}
 
-    private static <Item extends Comparable<? super Item>> void sink(
-            final Item[] values, int k, final int length) {
-        while (2 * k <= length) {
-            int j = 2 * k;
-            if (j < length && isLess(values, j, j + 1))
-                j++;
-            if (!isLess(values, k, j))
-                break;
-            swap(values, k, j);
-            k = j;
-        }
-    }
+		assert isIncreasing(values) : "Array should be increasing after sorting.";
+	}
 
-    private static <Item extends Comparable<? super Item>> boolean isLess(
-            final Item[] values, final int i, final int j) {
-        return values[i - 1].compareTo(values[j - 1]) < 0;
-    }
+	private static <Item extends Comparable<? super Item>> void sink(final Item[] values, int k, final int length) {
+		while (2 * k <= length) {
+			int j = 2 * k;
+			if (j < length && isLess(values, j, j + 1))
+				j++;
+			if (!isLess(values, k, j))
+				break;
+			swap(values, k, j);
+			k = j;
+		}
+	}
 
-    private static <Value extends Comparable<? super Value>> boolean isLess(
-            final Value first, final Value second) {
-        return first.compareTo(second) < 0;
-    }
+	private static <Item extends Comparable<? super Item>> boolean isLess(final Item[] values, final int i,
+			final int j) {
+		return values[i - 1].compareTo(values[j - 1]) < 0;
+	}
 
-    private static void swap(final Object[] values, final int i, final int j) {
-        final Object temporary = values[i - 1];
-        values[i - 1] = values[j - 1];
-        values[j - 1] = temporary;
-    }
+	private static <Value extends Comparable<? super Value>> boolean isLess(final Value first, final Value second) {
+		return first.compareTo(second) < 0;
+	}
 
-    private static <Item extends Comparable<? super Item>> boolean isIncreasing(
-            final Item[] values) {
-        for (int i = 1; i < values.length; i++)
-            if (isLess(values[i], values[i - 1]))
-                return false;
-        return true;
-    }
+	private static void swap(final Object[] values, final int i, final int j) {
+		final Object temporary = values[i - 1];
+		values[i - 1] = values[j - 1];
+		values[j - 1] = temporary;
+	}
+
+	private static <Item extends Comparable<? super Item>> boolean isIncreasing(final Item[] values) {
+		for (int i = 1; i < values.length; i++)
+			if (isLess(values[i], values[i - 1]))
+				return false;
+		return true;
+	}
 
 }
 

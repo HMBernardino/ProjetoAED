@@ -3,337 +3,335 @@ package terceira.entrega.hashtable;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
+import static terceira.entrega.hashtable.BinarySearchOrderedTableTester.typeOperation;
 
 import java.util.NoSuchElementException;
 
 public class BinarySearchOrderedTable<Key extends Comparable<? super Key>, Value> {
 
-    private static final int initialCapacity = 2;
+	private static final int initialCapacity = 2;
 
-    private Key[] keys;
-    private Value[] values;
-    private int size = 0;
+	private Key[] keys;
+	private Value[] values;
+	private int size = 0;
 
-    public BinarySearchOrderedTable() {
-        this(initialCapacity);
+	public BinarySearchOrderedTable() {
+		this(initialCapacity);
 
-        checkInvariant();
-    }
+		checkInvariant();
+	}
 
-    @SuppressWarnings("unchecked")
-    public BinarySearchOrderedTable(final int capacity) {
-        if (capacity <= 0)
-            throw new IllegalArgumentException("Capacity must be positive.");
-        
-        keys = (Key[]) new Comparable[capacity];
-        values = (Value[]) new Object[capacity];
+	@SuppressWarnings("unchecked")
+	public BinarySearchOrderedTable(final int capacity) {
+		if (capacity <= 0)
+			throw new IllegalArgumentException("Capacity must be positive.");
 
-        checkInvariant();
-    }
+		keys = (Key[]) new Comparable[capacity];
+		values = (Value[]) new Object[capacity];
 
-    public int size() {
-        checkInvariant();
+		checkInvariant();
+	}
 
-        return size;
-    }
+	public int size() {
+		checkInvariant();
 
-    public boolean isEmpty() {
-        checkInvariant();
+		return size;
+	}
 
-        return size() == 0;
-    }
+	public boolean isEmpty() {
+		checkInvariant();
 
-    public boolean contains(final Key key) {
-        checkInvariant();
+		return size() == 0;
+	}
 
-        return valueFor(key) != null;
-    }
+	public boolean contains(final Key key) {
+		checkInvariant();
 
-    public Value valueFor(final Key key) {
-        checkInvariant();
+		return valueFor(key) != null;
+	}
 
-        if (isEmpty())
-            return null;
+	public Value valueFor(final Key key) {
+		checkInvariant();
 
-        final int rank = rankOf(key);
+		if (isEmpty())
+			return null;
 
-        if (rank < size && keys[rank].compareTo(key) == 0)
-            return values[rank];
+		final int rank = rankOf(key);
 
-        return null;
-    }
+		if (rank < size && keys[rank].compareTo(key) == 0)
+			return values[rank];
 
-    public Iterable<Key> keys() {
-        checkInvariant();
+		return null;
+	}
 
-        return keysInRange(minimum(), maximum());
-    }
+	public Iterable<Key> keys() {
+		checkInvariant();
 
-    public void put(final Key key, final Value value) {
-        checkInvariant();
+		return keysInRange(minimum(), maximum());
+	}
 
-        if (value == null) {
-            delete(key);
-            return;
-        }
+	public void put(final Key key, final Value value) {
+		checkInvariant();
 
-        final int rank = rankOf(key);
+		if (value == null) {
+			delete(key);
+			return;
+		}
 
-        if (rank < size && keys[rank].compareTo(key) == 0) {
-            values[rank] = value;
-            return;
-        }
+		final int rank = rankOf(key);
 
-        if (size == keys.length)
-            changeCapacityTo(2 * keys.length);
+		if (rank < size && keys[rank].compareTo(key) == 0) {
+			values[rank] = value;
+			return;
+		}
 
-        for (int i = size; i > rank; i--) {
-            keys[i] = keys[i - 1];
-            values[i] = values[i - 1];
-        }
+		if (size == keys.length)
+			changeCapacityTo(2 * keys.length);
 
-        keys[rank] = key;
-        values[rank] = value;
+		for (int i = size; i > rank; i--) {
+			keys[i] = keys[i - 1];
+			values[i] = values[i - 1];
+		}
 
-        size++;
+		keys[rank] = key;
+		values[rank] = value;
 
-        checkInvariant();
-    }
+		size++;
 
-    public void delete(final Key key) {
-        checkInvariant();
+		checkInvariant();
+	}
 
-        if (isEmpty())
-            return;
+	public void delete(final Key key) {
+		checkInvariant();
 
-        final int rank = rankOf(key);
+		if (isEmpty())
+			return;
 
-        if (rank == size || keys[rank].compareTo(key) != 0)
-            return;
+		final int rank = rankOf(key);
 
-        for (int j = rank; j < size - 1; j++) {
-            keys[j] = keys[j + 1];
-            values[j] = values[j + 1];
-        }
+		if (rank == size || keys[rank].compareTo(key) != 0)
+			return;
 
-        size--;
+		for (int j = rank; j < size - 1; j++) {
+			keys[j] = keys[j + 1];
+			values[j] = values[j + 1];
+		}
 
-        keys[size] = null;
-        values[size] = null;
+		size--;
 
-        if (size > 0 && size == keys.length / 4)
-            changeCapacityTo(keys.length / 2);
+		keys[size] = null;
+		values[size] = null;
 
-        checkInvariant();
-    }
+		if (size > 0 && size == keys.length / 4)
+			changeCapacityTo(keys.length / 2);
 
-    public int rankOf(final Key key) {
-        int first = 0;
-        int last = size - 1;
+		checkInvariant();
+	}
 
-        while (first <= last) {
-            final int middle = first + (last - first) / 2;
+	public int rankOf(final Key key) {
+		int first = 0;
+		int last = size - 1;
 
-            final int comparison = key.compareTo(keys[middle]);
+		while (first <= last) {
+			final int middle = first + (last - first) / 2;
 
-            if (comparison < 0)
-                last = middle - 1;
-            else if (comparison > 0)
-                first = middle + 1;
-            else
-                return middle;
-        }
-        return first;
-    }
+			final int comparison = key.compareTo(keys[middle]);
 
-    public Key minimum() {
-        checkInvariant();
+			if (comparison < 0)
+				last = middle - 1;
+			else if (comparison > 0)
+				first = middle + 1;
+			else
+				return middle;
+		}
+		return first;
+	}
 
-        if (isEmpty())
-            return null;
+	public Key minimum() {
+		checkInvariant();
 
-        return keys[0];
-    }
+		if (isEmpty())
+			return null;
 
-    public Key maximum() {
-        checkInvariant();
+		return keys[0];
+	}
 
-        if (isEmpty())
-            return null;
+	public Key maximum() {
+		checkInvariant();
 
-        return keys[size - 1];
-    }
+		if (isEmpty())
+			return null;
 
-    public Key keyWithRank(final int rank) {
-        if (rank < 0 || rank >= size)
-            return null;
+		return keys[size - 1];
+	}
 
-        return keys[rank];
-    }
+	public Key keyWithRank(final int rank) {
+		if (rank < 0 || rank >= size)
+			return null;
 
-    public Key floorOf(final Key key) {
-        checkInvariant();
+		return keys[rank];
+	}
 
-        final int rank = rankOf(key);
+	public Key floorOf(final Key key) {
+		checkInvariant();
 
-        if (rank < size && key.compareTo(keys[rank]) == 0)
-            return keys[rank];
+		final int rank = rankOf(key);
 
-        if (rank == 0)
-            return null;
-        else
-            return keys[rank - 1];
-    }
+		if (rank < size && key.compareTo(keys[rank]) == 0)
+			return keys[rank];
 
-    public Key ceilingOf(final Key key) {
-        checkInvariant();
+		if (rank == 0)
+			return null;
+		else
+			return keys[rank - 1];
+	}
 
-        final int rank = rankOf(key);
+	public Key ceilingOf(final Key key) {
+		checkInvariant();
 
-        if (rank == size)
-            return null;
-        else
-            return keys[rank];
-    }
+		final int rank = rankOf(key);
 
-    public int sizeOfRange(final Key low, final Key high) {
-        checkInvariant();
+		if (rank == size)
+			return null;
+		else
+			return keys[rank];
+	}
 
-        if (low.compareTo(high) > 0)
-            return 0;
+	public int sizeOfRange(final Key low, final Key high) {
+		checkInvariant();
 
-        if (contains(high))
-            return rankOf(high) - rankOf(low) + 1;
-        else
-            return rankOf(high) - rankOf(low);
-    }
+		if (low.compareTo(high) > 0)
+			return 0;
 
-    public Iterable<Key> keysInRange(final Key low, final Key high) {
-        checkInvariant();
+		if (contains(high))
+			return rankOf(high) - rankOf(low) + 1;
+		else
+			return rankOf(high) - rankOf(low);
+	}
 
-        final Queue<Key> queue = new Queue<Key>();
+	public Iterable<Key> keysInRange(final Key low, final Key high) {
+		checkInvariant();
 
-        if (low == null && high == null)
-            return queue;
+		final Queue<Key> queue = new Queue<Key>();
 
-        if (low == null)
-            throw new IllegalArgumentException(
-                    "Low and high keys must either both be null or both non-null");
-        if (high == null)
-            throw new IllegalArgumentException(
-                    "Low and high keys must either both be null or both non-null");
+		if (low == null && high == null)
+			return queue;
 
-        if (low.compareTo(high) > 0)
-            return queue;
+		if (low == null)
+			throw new IllegalArgumentException("Low and high keys must either both be null or both non-null");
+		if (high == null)
+			throw new IllegalArgumentException("Low and high keys must either both be null or both non-null");
 
-        for (int i = rankOf(low); i < rankOf(high); i++)
-            queue.enqueue(keys[i]);
+		if (low.compareTo(high) > 0)
+			return queue;
 
-        if (contains(high))
-            queue.enqueue(keys[rankOf(high)]);
+		for (int i = rankOf(low); i < rankOf(high); i++)
+			queue.enqueue(keys[i]);
 
-        return queue;
-    }
+		if (contains(high))
+			queue.enqueue(keys[rankOf(high)]);
 
-    public void deleteMinimum() {
-        checkInvariant();
+		return queue;
+	}
 
-        if (isEmpty())
-            throw new NoSuchElementException(
-                    "Cannot delete minimum key-value from empty table");
+	public void deleteMinimum() {
+		checkInvariant();
 
-        delete(minimum());
+		if (isEmpty())
+			throw new NoSuchElementException("Cannot delete minimum key-value from empty table");
 
-        checkInvariant();
-    }
+		delete(minimum());
 
-    public void deleteMaximum() {
-        checkInvariant();
+		checkInvariant();
+	}
 
-        if (isEmpty())
-            throw new NoSuchElementException("Symbol table underflow error");
+	public void deleteMaximum() {
+		checkInvariant();
 
-        delete(maximum());
+		if (isEmpty())
+			throw new NoSuchElementException("Symbol table underflow error");
 
-        checkInvariant();
-    }
+		delete(maximum());
 
-    private void changeCapacityTo(final int newCapacity) {
-        assert newCapacity >= size : "Cannot reduce capacity below table size.";
+		checkInvariant();
+	}
 
-        @SuppressWarnings("unchecked")
-        final Key[] newsKeys = (Key[]) new Comparable[newCapacity];
-        @SuppressWarnings("unchecked")
-        final Value[] newValues = (Value[]) new Object[newCapacity];
+	private void changeCapacityTo(final int newCapacity) {
+		assert newCapacity >= size : "Cannot reduce capacity below table size.";
 
-        for (int i = 0; i != size; i++) {
-            newsKeys[i] = keys[i];
-            newValues[i] = values[i];
-        }
+		@SuppressWarnings("unchecked")
+		final Key[] newsKeys = (Key[]) new Comparable[newCapacity];
+		@SuppressWarnings("unchecked")
+		final Value[] newValues = (Value[]) new Object[newCapacity];
 
-        values = newValues;
-        keys = newsKeys;
-    }
+		for (int i = 0; i != size; i++) {
+			newsKeys[i] = keys[i];
+			newValues[i] = values[i];
+		}
 
-    private void checkInvariant() {
-        assert keys != null : "Table has a null reference to the values array.";
-        assert values != null : "Table has a null reference to the values array.";
-        assert isSizeConsistent() : "Table array capacities not consistent with size.";
-        assert keysAreNonNull() : "Table contains null keys.";
-        assert valuesAreNonNull() : "Table contains null values.";
-        assert isIncreasing() : "Array of keys in table is not increasing.";
-        assert isRankConsistent() : "Ranks of table are not consistent.";
-    }
+		values = newValues;
+		keys = newsKeys;
+	}
 
-    private boolean isSizeConsistent() {
-        return 0 <= size && size <= keys.length && keys.length == values.length;
-    }
+	private void checkInvariant() {
+		assert keys != null : "Table has a null reference to the values array.";
+		assert values != null : "Table has a null reference to the values array.";
+		assert isSizeConsistent() : "Table array capacities not consistent with size.";
+		assert keysAreNonNull() : "Table contains null keys.";
+		assert valuesAreNonNull() : "Table contains null values.";
+		assert isIncreasing() : "Array of keys in table is not increasing.";
+		assert isRankConsistent() : "Ranks of table are not consistent.";
+	}
 
-    private boolean keysAreNonNull() {
-        for (int i = 0; i != size; i++)
-            if (keys[i] == null)
-                return false;
-        return true;
-    }
+	private boolean isSizeConsistent() {
+		return 0 <= size && size <= keys.length && keys.length == values.length;
+	}
 
-    private boolean valuesAreNonNull() {
-        for (int i = 0; i != size; i++)
-            if (values[i] == null)
-                return false;
-        return true;
-    }
+	private boolean keysAreNonNull() {
+		for (int i = 0; i != size; i++)
+			if (keys[i] == null)
+				return false;
+		return true;
+	}
 
-    private boolean isIncreasing() {
-        for (int i = 1; i < size; i++)
-            if (keys[i].compareTo(keys[i - 1]) < 0)
-                return false;
-        return true;
-    }
+	private boolean valuesAreNonNull() {
+		for (int i = 0; i != size; i++)
+			if (values[i] == null)
+				return false;
+		return true;
+	}
 
-    private boolean isRankConsistent() {
-        for (int i = 0; i != size; i++)
-            if (i != rankOf(keyWithRank(i)))
-                return false;
+	private boolean isIncreasing() {
+		for (int i = 1; i < size; i++)
+			if (keys[i].compareTo(keys[i - 1]) < 0)
+				return false;
+		return true;
+	}
 
-        for (int i = 0; i != size; i++)
-            if (keys[i].compareTo(keyWithRank(rankOf(keys[i]))) != 0)
-                return false;
+	private boolean isRankConsistent() {
+		for (int i = 0; i != size; i++)
+			if (i != rankOf(keyWithRank(i)))
+				return false;
 
-        return true;
-    }
+		for (int i = 0; i != size; i++)
+			if (keys[i].compareTo(keyWithRank(rankOf(keys[i]))) != 0)
+				return false;
 
-    // Test input: S E A R C H E X A M P L E
-    public static void main(final String[] arguments) {
-        final BinarySearchOrderedTable<String, Integer> table = new BinarySearchOrderedTable<>();
+		return true;
+	}
 
-        for (int i = 0; !StdIn.isEmpty(); i++) {
-            final String word = StdIn.readString();
-            table.put(word, i);
-        }
+	// Test input: S E A R C H E X A M P L E
+	public static void main(final String[] arguments) {
+		final BinarySearchOrderedTable<String, Integer> table = new BinarySearchOrderedTable<>();
 
-        for (String word : table.keys())
-            StdOut.println(word + " " + table.valueFor(word));
-    }
+		for (int i = 0; !StdIn.isEmpty(); i++) {
+			final String word = StdIn.readString();
+			table.put(word, i);
+		}
+
+		for (String word : table.keys())
+			StdOut.println(word + " " + table.valueFor(word));
+	}
 
 }
 

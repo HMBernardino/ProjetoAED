@@ -3,16 +3,15 @@ package primeira.entrega;
 import java.lang.instrument.Instrumentation;
 
 public class ObjectSizeFetcher {
-    private static Instrumentation instrumentation;
+	private static Instrumentation instrumentation;
 
-    public static void premain(final String arguments,
-            final Instrumentation instrumentation) {
-        ObjectSizeFetcher.instrumentation = instrumentation;
-    }
+	public static void premain(final String arguments, final Instrumentation instrumentation) {
+		ObjectSizeFetcher.instrumentation = instrumentation;
+	}
 
-    public static long sizeOf(final Object object) {
-        return instrumentation.getObjectSize(object);
-    }
+	public static long sizeOf(final Object object) {
+		return instrumentation.getObjectSize(object);
+	}
 }
 
 /*

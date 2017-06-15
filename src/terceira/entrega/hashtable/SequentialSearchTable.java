@@ -6,189 +6,187 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class SequentialSearchTable<Key, Value> {
 
-    private int size;
-    private Node<Key, Value> first;
+	private int size;
+	private Node<Key, Value> first;
 
-    private static class Node<Key, Value> {
+	private static class Node<Key, Value> {
 
-        private final Key key;
-        private Value value;
-        private Node<Key, Value> next;
+		private final Key key;
+		private Value value;
+		private Node<Key, Value> next;
 
-        public Node(final Key key, final Value value,
-                final Node<Key, Value> next) {
-            this.key = key;
-            this.value = value;
-            this.next = next;
-        }
+		public Node(final Key key, final Value value, final Node<Key, Value> next) {
+			this.key = key;
+			this.value = value;
+			this.next = next;
+		}
 
-    }
+	}
 
-    public SequentialSearchTable() {
-        size = 0;
-        first = null;
+	public SequentialSearchTable() {
+		size = 0;
+		first = null;
 
-        checkInvariant();
-    }
+		checkInvariant();
+	}
 
-    public int size() {
-        checkInvariant();
+	public int size() {
+		checkInvariant();
 
-        return size;
-    }
+		return size;
+	}
 
-    public boolean isEmpty() {
-        checkInvariant();
+	public boolean isEmpty() {
+		checkInvariant();
 
-        return size() == 0;
-    }
+		return size() == 0;
+	}
 
-    public boolean contains(final Key key) {
-        checkInvariant();
+	public boolean contains(final Key key) {
+		checkInvariant();
 
-        return valueFor(key) != null;
-    }
+		return valueFor(key) != null;
+	}
 
-    public Value valueFor(final Key key) {
-        checkInvariant();
+	public Value valueFor(final Key key) {
+		checkInvariant();
 
-        for (Node<Key, Value> node = first; node != null; node = node.next)
-            if (key.equals(node.key))
-                return node.value;
+		for (Node<Key, Value> node = first; node != null; node = node.next)
+			if (key.equals(node.key))
+				return node.value;
 
-        return null;
-    }
+		return null;
+	}
 
-    public Iterable<Key> keys() {
-        checkInvariant();
+	public Iterable<Key> keys() {
+		checkInvariant();
 
-        final Queue<Key> queue = new Queue<Key>();
+		final Queue<Key> queue = new Queue<Key>();
 
-        for (Node<Key, Value> node = first; node != null; node = node.next)
-            queue.enqueue(node.key);
+		for (Node<Key, Value> node = first; node != null; node = node.next)
+			queue.enqueue(node.key);
 
-        return queue;
-    }
+		return queue;
+	}
 
-    public void put(final Key key, final Value value) {
-        checkInvariant();
+	public void put(final Key key, final Value value) {
+		checkInvariant();
 
-        if (value == null) {
-            delete(key);
-            return;
-        }
+		if (value == null) {
+			delete(key);
+			return;
+		}
 
-        for (Node<Key, Value> node = first; node != null; node = node.next)
-            if (key.equals(node.key)) {
-                node.value = value;
-                return;
-            }
+		for (Node<Key, Value> node = first; node != null; node = node.next)
+			if (key.equals(node.key)) {
+				node.value = value;
+				return;
+			}
 
-        first = new Node<Key, Value>(key, value, first);
+		first = new Node<Key, Value>(key, value, first);
 
-        size++;
+		size++;
 
-        checkInvariant();
-    }
+		checkInvariant();
+	}
 
-    // Iterative version (see commented out recursive version below):
-    public void delete(final Key key) {
-        checkInvariant();
+	// Iterative version (see commented out recursive version below):
+	public void delete(final Key key) {
+		checkInvariant();
 
-        if (isEmpty())
-            return;
+		if (isEmpty())
+			return;
 
-        if (key.equals(first.key)) {
-            size--;
-            first = first.next;
-        } else {
-            Node<Key, Value> node = first;
-            while (node.next != null && !key.equals(node.next.key))
-                node = node.next;
-            if (node.next != null) {
-                size--;
-                node.next = node.next.next;
-            }
-        }
+		if (key.equals(first.key)) {
+			size--;
+			first = first.next;
+		} else {
+			Node<Key, Value> node = first;
+			while (node.next != null && !key.equals(node.next.key))
+				node = node.next;
+			if (node.next != null) {
+				size--;
+				node.next = node.next.next;
+			}
+		}
 
-        checkInvariant();
-    }
+		checkInvariant();
+	}
 
-    /*-
-    public void delete(final Key key) {
-        checkInvariant();
-    
-        first = deleteFrom(first, key);
-    
-        checkInvariant();
-    }
-    
-    private Node<Key, Value> deleteFrom(final Node<Key, Value> node,
-            final Key key) {
-        if (node == null)
-            return null;
-    
-        if (key.equals(node.key)) {
-            size--;
-            return node.next;
-        }
-    
-        node.next = deleteFrom(node.next, key);
-    
-        return node;
-    }
-    */
+	/*-
+	public void delete(final Key key) {
+	    checkInvariant();
+	
+	    first = deleteFrom(first, key);
+	
+	    checkInvariant();
+	}
+	
+	private Node<Key, Value> deleteFrom(final Node<Key, Value> node,
+	        final Key key) {
+	    if (node == null)
+	        return null;
+	
+	    if (key.equals(node.key)) {
+	        size--;
+	        return node.next;
+	    }
+	
+	    node.next = deleteFrom(node.next, key);
+	
+	    return node;
+	}
+	*/
 
-    private void checkInvariant() {
-        assert isSizeConsistent() : "Linked list length not consistent with size.";
-        assert keysAreNonNull() : "Table contains null keys.";
-        assert valuesAreNonNull() : "Table contains null values.";
-        assert hasNoRepeatedKeys() : "Table contains repeated keys.";
-    }
+	private void checkInvariant() {
+		assert isSizeConsistent() : "Linked list length not consistent with size.";
+		assert keysAreNonNull() : "Table contains null keys.";
+		assert valuesAreNonNull() : "Table contains null values.";
+		assert hasNoRepeatedKeys() : "Table contains repeated keys.";
+	}
 
-    private boolean isSizeConsistent() {
-        int numberOfNodes = 0;
-        for (Node<Key, Value> node = first; node != null; node = node.next)
-            numberOfNodes++;
+	private boolean isSizeConsistent() {
+		int numberOfNodes = 0;
+		for (Node<Key, Value> node = first; node != null; node = node.next)
+			numberOfNodes++;
 
-        return numberOfNodes == size;
-    }
+		return numberOfNodes == size;
+	}
 
-    private boolean keysAreNonNull() {
-        for (Node<Key, Value> node = first; node != null; node = node.next)
-            if (node.key == null)
-                return false;
-        return true;
-    }
+	private boolean keysAreNonNull() {
+		for (Node<Key, Value> node = first; node != null; node = node.next)
+			if (node.key == null)
+				return false;
+		return true;
+	}
 
-    private boolean valuesAreNonNull() {
-        for (Node<Key, Value> node = first; node != null; node = node.next)
-            if (node.value == null)
-                return false;
-        return true;
-    }
+	private boolean valuesAreNonNull() {
+		for (Node<Key, Value> node = first; node != null; node = node.next)
+			if (node.value == null)
+				return false;
+		return true;
+	}
 
-    private boolean hasNoRepeatedKeys() {
-        for (Node<Key, Value> node = first; node != null; node = node.next)
-            for (Node<Key, Value> other = node.next; other != null;
-                 other = other.next)
-                if (node.key.equals(other.key))
-                    return false;
-        return true;
-    }
+	private boolean hasNoRepeatedKeys() {
+		for (Node<Key, Value> node = first; node != null; node = node.next)
+			for (Node<Key, Value> other = node.next; other != null; other = other.next)
+				if (node.key.equals(other.key))
+					return false;
+		return true;
+	}
 
-    // Test input: S E A R C H E X A M P L E
-    public static void main(final String[] arguments) {
-        final SequentialSearchTable<String, Integer> table = new SequentialSearchTable<>();
+	// Test input: S E A R C H E X A M P L E
+	public static void main(final String[] arguments) {
+		final SequentialSearchTable<String, Integer> table = new SequentialSearchTable<>();
 
-        for (int i = 0; !StdIn.isEmpty(); i++) {
-            final String word = StdIn.readString();
-            table.put(word, i);
-        }
+		for (int i = 0; !StdIn.isEmpty(); i++) {
+			final String word = StdIn.readString();
+			table.put(word, i);
+		}
 
-        for (String word : table.keys())
-            StdOut.println(word + " " + table.valueFor(word));
-    }
+		for (String word : table.keys())
+			StdOut.println(word + " " + table.valueFor(word));
+	}
 
 }
 
